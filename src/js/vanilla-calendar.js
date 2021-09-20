@@ -19,7 +19,7 @@ let VanillaCalendar = (function () {
         let opts = {
             selector: null,
             datesFilter: false,
-            pastDates: true,
+            pastDates: false,
             availableWeekDays: [],
             availableDates: [],
             date: new Date(),
@@ -30,7 +30,7 @@ let VanillaCalendar = (function () {
             month_label: null,
             onSelect: (data, elem) => {},
             months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            shortWeekday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            shortWeekday: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' , 'Sun'],
         }
         for (let k in options) if (opts.hasOwnProperty(k)) opts[k] = options[k]
         
@@ -39,21 +39,29 @@ let VanillaCalendar = (function () {
             return
         
         const getWeekDay = function (day) {
-            return ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][day]
+            return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' , 'sunday'][day]
         }
         
         const createDay = function (date) {
             let newDayElem = document.createElement('div')
             let dateElem = document.createElement('span')
             dateElem.innerHTML = date.getDate()
+            console.log(date.getDate())
+
             newDayElem.className = 'vanilla-calendar-date'
             newDayElem.setAttribute('data-calendar-date', date)
             
             let available_week_day = opts.availableWeekDays.filter(f => f.day === date.getDay() || f.day === getWeekDay(date.getDay()))
             let available_date = opts.availableDates.filter(f => f.date === (date.getFullYear() + '-' + String(date.getMonth() + 1).padStart('2', 0) + '-' + String(date.getDate()).padStart('2', 0)))
-            
+            // var temp = 0
             if (date.getDate() === 1) {
-                newDayElem.style.marginLeft = ((date.getDay()) * 14.28) + '%'
+                newDayElem.style.marginLeft = (((date.getDay()) - 1) * 14.28 ) + '%'
+                if(newDayElem.style.marginLeft == "-14.28%"){
+                    newDayElem.style.marginLeft = '86.2%'
+                }
+                console.log("New");
+                console.log(newDayElem);
+                
             }
             if (opts.date.getTime() <= opts.todaysDate.getTime() - 1 && !opts.pastDates) {
                 newDayElem.classList.add('vanilla-calendar-date--disabled')
@@ -110,7 +118,8 @@ let VanillaCalendar = (function () {
             clearCalendar()
             let currentMonth = opts.date.getMonth()
             while (opts.date.getMonth() === currentMonth) {
-                createDay(opts.date)
+                createDay(opts.date);
+                // break;
                 opts.date.setDate(opts.date.getDate() + 1)
             }
             
